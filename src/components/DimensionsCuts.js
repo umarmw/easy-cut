@@ -1,11 +1,10 @@
-'use client'
+"use client"
 import React, { useState } from 'react';
 import { Input } from "@nextui-org/react";
-import Image from "next/image";
-import { v4 as uuidv4 } from 'uuid';
+import {Button} from "@nextui-org/react";
+
 
 interface Dimension {
-  id: string; 
   width: number;
   height: number;
 }
@@ -101,14 +100,14 @@ function bestFitDecreasing(dimensions: Dimension[], paneWidth: number, paneHeigh
   }
 }
 
-function paneRenderer(paneIndex: number, paneWidth: number, paneHeight: number, pane: Pane): JSX.Element {
+function paneRenderer(paneIndex, paneWidth, paneHeight, pane) {
   return (
-    <React.Fragment key={paneIndex}>
+    <React.Fragment>
       <h2>Pane {paneIndex + 1}</h2>
       <div style={{ position: 'relative', width: paneWidth, height: paneHeight, border: '2px solid grey' }}>
         {pane.dimensions.map((dimension, index) => (
           <div
-            key={dimension.id} 
+            key={index}
             style={{
               position: 'absolute',
               left: dimension.x,
@@ -124,33 +123,48 @@ function paneRenderer(paneIndex: number, paneWidth: number, paneHeight: number, 
         ))}
       </div>
     </React.Fragment>
-  );
+  )
 }
-
-function DimensionCuts({ panes, paneWidth, paneHeight, paneIndex = 0 }: { panes: Pane[]; paneWidth: number; paneHeight: number; paneIndex: number }): JSX.Element {
+function DimensionCuts({ panes, paneWidth, paneHeight, paneIndex =0 }: { panes: Pane[]; paneWidth: number; paneHeight: number; paneIndex: number }) {
   return (
     <React.Fragment>
-      {panes.map((pane, index) => (
-        <React.Fragment key={index}>
-          <div style={{ marginRight: '20px' }}>
-            {paneRenderer(index, paneWidth, paneHeight, pane)}
+      {panes.map((pane) => (
+        <React.Fragment>
+          <div key={paneIndex} style={{ marginRight: '20px' }}>
+            {paneRenderer(paneIndex, paneWidth, paneHeight, pane)}
           </div>
           {pane.notFit && (
             <DimensionCuts
               panes={pane.notFit}
               paneWidth={paneWidth}
               paneHeight={paneHeight}
-              paneIndex={index + 1}
+              paneIndex={paneIndex+1}
             />
           )}
         </React.Fragment>
-      ))}
+      ))
+    }
     </React.Fragment>
   );
 }
 
-function App() {
-  const [dimensions, setDimensions] = useState<Dimension[]>([]);
+//-------------------------------------------
+
+function DimensionCuts() {
+
+  // const [dimensions] = useState<Dimension[]>([
+  //   { width: 500, height: 100 },
+  //   { width: 500, height: 50 },
+  //   { width: 500, height: 80 },
+  //   { width: 500, height: 90 },
+  //   { width: 500, height: 100 },
+  //   { width: 500, height: 100 },
+  //   { width: 500, height: 200 },
+  // ]);
+  // const paneWidth = 500;
+  // const paneHeight = 300;
+
+  const [dimensions, setDimensions] = useState([]);
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
   const [paneWidth, setPaneWidth] = useState("");
@@ -158,79 +172,79 @@ function App() {
 
   const addDimension = () => {
     if (width && height) {
-      const newDimension: Dimension = {
-        id: uuidv4(), 
-        width: parseInt(width),
-        height: parseInt(height)
-      };
-      setDimensions([...dimensions, newDimension]);
+      setDimensions([
+        ...dimensions,
+        { width: parseInt(width), height: parseInt(height) },
+      ]);
       setWidth("");
       setHeight("");
     }
   };
+ 
 
-  const panes: Pane[] = bestFitDecreasing(dimensions, parseInt(paneWidth), parseInt(paneHeight));
+
+  const panes: Pane[] = bestFitDecreasing(dimensions, paneWidth, paneHeight);
 
   console.log("panes", panes);
 
   return (
     <div>
-      <h1 className='font-bold my-4 text-4xl'>Dimension Cuts</h1>
-      <div className='flex gap-10'>
-        <div className="pr-10">
-          <div className="flex gap-4 ">
-            <Input
-              className="w-fit h-4"
-              label="PanWidth"
-              type="text"
-              onChange={(e) => setPaneWidth(e.target.value)}
-            />
-            <Input
-              className="w-fit h-4"
-              label="PanHeight"
-              type="text"
-              onChange={(e) => setPaneHeight(e.target.value)}
-            />
-          </div>
-          <div className="flex gap-4 py-10 items-baseline">
-            <Input
-              className="w-fit h-4"
-              label="Width"
-              type="text"
-              value={width}
-              onChange={(e) => setWidth(e.target.value)}
-            />
-            <Input
-              className="w-fit h-4"
-             
-              label="Height"
-              type="text"
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-            />
-            <button onClick={addDimension}>
-              <Image
-                src="/plus-symbol-button.png"
-                width={20}
-                height={20}
-                alt="Picture of the author"
-              />
-            </button>
-          </div>
-          <div className="my-8">
-            {dimensions.map((dim) => (
-              <div className="my-2" key={dim.id}>
-                 Width: {dim.width}, Height: {dim.height}
-              </div>
-            ))}
-          </div>
+      <h1>Dimension Cuts</h1>
+  
+
+      <div className="pr-10">
+        <div className="flex gap-4 ">
+          <Input
+            className="w-fit "
+            label="PanWidth"
+            type="text"
+            onChange={(e) => setPaneWidth(e.target.value)}
+          />
+          <Input
+            className="w-fit"
+            label="PanHeight"
+            type="text"
+            onChange={(e) => setPaneHeight(e.target.value)}
+          />
+          {/* <p>{paneWidth}</p>
+          <p>{paneHeight}</p> */}
         </div>
-        <div className=''>
-          <DimensionCuts panes={panes} paneWidth={parseInt(paneWidth)} paneHeight={parseInt(paneHeight)} />
+
+        <div className="flex gap-4 py-10">
+          <Input
+            className="w-fit"
+            label="Width"
+            type="text"
+            value={width}
+            onChange={(e) => setWidth(e.target.value)}
+          />
+          <Input
+            className="w-fit"
+            label="Height"
+            type="text"
+            value={height}
+            onChange={(e) => setHeight(e.target.value)}
+          />
+          <button onClick={addDimension}>
+            +
+          </button>
+        </div>
+        <div className="my-8">
+          {dimensions.map((dim, index) => (
+            <div className="my-2" key={index}>
+              {index + 1}. Width: {dim.width}, Height: {dim.height}
+            </div>
+          ))}
         </div>
       </div>
+
+
+      <div className=''>
+        <DimensionCuts panes={panes} paneWidth={paneWidth} paneHeight={paneHeight} />
+      </div>
+
     </div>
   );
 }
 
-export default App;
+export default DimensionCuts;

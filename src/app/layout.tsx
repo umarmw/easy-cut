@@ -1,6 +1,8 @@
-import type { Metadata } from "next";
+// src/app/layout.tsx
+
+import { NextUIProvider } from "@nextui-org/react";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "../../styles/globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +18,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <head>
+        <title>{metadata.title}</title>
+        <meta name="description" content={metadata.description} />
+        <link rel="stylesheet" href={inter.stylesheet} />
+      </head>
+      <body className={inter.className}>
+        {/* Wrap content with NextUIProvider */}
+        {/* <NextUIProvider> */}
+          {children}
+        {/* </NextUIProvider> */}
+      </body>
     </html>
   );
 }
