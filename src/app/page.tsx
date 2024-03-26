@@ -103,22 +103,6 @@ function bestFitDecreasing(dimensions: Dimension[], paneWidth: number, paneHeigh
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function paneRenderer(paneIndex: number, paneWidth: number, paneHeight: number, pane: Pane): JSX.Element {
   return (
     <React.Fragment key={paneIndex}>
