@@ -27,9 +27,11 @@ function intersects(rect1: Node, rect2: Node): boolean {
     rect1.x < rect2.x + rect2.width &&
     rect1.x + rect1.width > rect2.x &&
     rect1.y < rect2.y + rect2.height &&
-    rect1.y + rect1.height > rect2.y
+    rect1.y + rect1.height > rect2.y  
   );
 }
+
+
 
 function bestFitDecreasing(dimensions: Dimension[], paneWidth: number, paneHeight: number): Pane[] {
   dimensions.sort((a, b) => (b.width * b.height) - (a.width * a.height));
@@ -101,10 +103,26 @@ function bestFitDecreasing(dimensions: Dimension[], paneWidth: number, paneHeigh
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function paneRenderer(paneIndex: number, paneWidth: number, paneHeight: number, pane: Pane): JSX.Element {
   return (
     <React.Fragment key={paneIndex}>
-      <h2>Pane {paneIndex + 1}</h2>
+      <h2>Pane {paneIndex }</h2>
       <div style={{ position: 'relative', width: paneWidth, height: paneHeight, border: '2px solid grey' }}>
         {pane.dimensions.map((dimension, index) => (
           <div
@@ -127,27 +145,36 @@ function paneRenderer(paneIndex: number, paneWidth: number, paneHeight: number, 
   );
 }
 
-function DimensionCuts({ panes, paneWidth, paneHeight, paneIndex = 0 }: { panes: Pane[]; paneWidth: number; paneHeight: number; paneIndex: number }): JSX.Element {
+
+function DimensionCuts({ panes, paneWidth, paneHeight, startingPaneIndex = 1 }: { panes: Pane[]; paneWidth: number; paneHeight: number; startingPaneIndex?: number }): JSX.Element {
+  let currentPaneIndex = startingPaneIndex;
+  
   return (
     <React.Fragment>
-      {panes.map((pane, index) => (
-        <React.Fragment key={index}>
-          <div style={{ marginRight: '20px' }}>
-            {paneRenderer(index, paneWidth, paneHeight, pane)}
-          </div>
-          {pane.notFit && (
-            <DimensionCuts
-              panes={pane.notFit}
-              paneWidth={paneWidth}
-              paneHeight={paneHeight}
-              paneIndex={index + 1}
-            />
-          )}
-        </React.Fragment>
-      ))}
+      {panes.map((pane, index) => {
+        currentPaneIndex++;
+
+        return (
+          <React.Fragment key={index}>
+            <div style={{ marginRight: '20px' }}>
+              {paneRenderer(currentPaneIndex - 1, paneWidth, paneHeight, pane)}
+            </div>
+            {pane.notFit && (
+              <DimensionCuts
+                panes={pane.notFit}
+                paneWidth={paneWidth}
+                paneHeight={paneHeight}
+                startingPaneIndex={currentPaneIndex} // Increment startingPaneIndex for nested panes
+              />
+            )}
+          </React.Fragment>
+        );
+      })}
     </React.Fragment>
   );
 }
+
+
 
 function App() {
   const [dimensions, setDimensions] = useState<Dimension[]>([]);
@@ -171,7 +198,7 @@ function App() {
 
   const panes: Pane[] = bestFitDecreasing(dimensions, parseInt(paneWidth), parseInt(paneHeight));
 
-  console.log("panes", panes);
+  // console.log(panes);
 
   return (
     <div>
