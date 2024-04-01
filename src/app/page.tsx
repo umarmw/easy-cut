@@ -3,6 +3,10 @@ import React, { useState } from 'react';
 import { Input } from "@nextui-org/react";
 import Image from "next/image";
 import { v4 as uuidv4 } from 'uuid';
+import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/react";
+import MyTable from '@/components/table';
+
+import TableDemo from '@/components/datatable';
 
 interface Dimension {
   id: string; 
@@ -34,11 +38,16 @@ function intersects(rect1: Node, rect2: Node): boolean {
 
 
 function bestFitDecreasing(dimensions: Dimension[], paneWidth: number, paneHeight: number): Pane[] {
+
+  //sorting cuttings according to area
   dimensions.sort((a, b) => (b.width * b.height) - (a.width * a.height));
 
+  // creating dim for cuttings
   const initialNode: Node = { x: 0, y: 0, width: paneWidth, height: paneHeight };
   const placedNodes: Node[] = [];
   const notFitNodes: Dimension[] = [];
+
+
 
   function findBestPlacement(node: Node, dimension: Dimension): Node | null {
     let bestFit: Node | null = null;
@@ -106,19 +115,6 @@ function bestFitDecreasing(dimensions: Dimension[], paneWidth: number, paneHeigh
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 function paneRenderer(paneIndex: number, paneWidth: number, paneHeight: number, pane: Pane): JSX.Element {
   return (
     <React.Fragment key={paneIndex}>
@@ -175,6 +171,8 @@ function DimensionCuts({ panes, paneWidth, paneHeight, startingPaneIndex = 1 }: 
 }
 
 
+//----------------------------------------------------------------------------------
+
 
 function App() {
   const [dimensions, setDimensions] = useState<Dimension[]>([]);
@@ -202,6 +200,19 @@ function App() {
 
   return (
     <div>
+        {/* <Table aria-label="Example table with dynamic content">
+      <TableHeader columns={columns}>
+        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+      </TableHeader>
+      <TableBody items={rows}>
+        {(item) => (
+          <TableRow key={item.key}>
+            {(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
+          </TableRow>
+        )}
+      </TableBody>
+    </Table> */}
+    <TableDemo />
       <h1 className='font-bold my-4 text-4xl'>Dimension Cuts</h1>
       <div className='flex gap-10'>
         <div className="pr-10">
@@ -247,7 +258,7 @@ function App() {
           <div className="my-8">
             {dimensions.map((dim) => (
               <div className="my-2" key={dim.id}>
-                 Width: {dim.width}, Height: {dim.height}
+                Width: {dim.width}, Height: {dim.height}
               </div>
             ))}
           </div>

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root{
-  background-color: rgb(8, 8, 8);
+  /* background-color: rgb(8, 8, 8); */
   color: #fff;
   margin:0 20px ;
 }
